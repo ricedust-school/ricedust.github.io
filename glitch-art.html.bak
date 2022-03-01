@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<title>Meme Mashup</title>
+</head>
+<body>
+
+<h1>Glitch Art</h1>
+
+<cite>A familiar face.</cite>
+
+<img src="glitch1.png">
+
+<cite>A cousin's house.</cite>
+
+<img src="glitch2.png">
+
+<cite>Home.</cite>
+
+<img src="glitch3.png">
+
+<a href="index.html">Return to main page</a>
+
+</body>
+</html>
