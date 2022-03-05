@@ -1,7 +1,7 @@
 body {
 	background-color: black;
 	color: white;
-	font-family: Helvetica;
+	font-family: Courier New, monospace;
 }
 
 div {
@@ -10,7 +10,6 @@ div {
 	left: 50%;
 	transform: translate(-50%,-50%);
 }
-
 
 a {
 	display: block;
@@ -22,6 +21,10 @@ a {
 a:hover, a:active {
 	color: white;
 	font-weight: bold;
+}
+
+.day {
+	font-size: xx-large;
 }
 
 .prompt {
