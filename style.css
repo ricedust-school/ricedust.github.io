@@ -1,23 +1,31 @@
 body {
 	background-color: black;
 	color: white;
+	font-family: Helvetica;
 }
 
-h1 {
-	text-align: center;
+div {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
 }
 
-h2 {
-	text-align: center;
-}
 
-img {
+a {
 	display: block;
-	margin: auto;
-	border-width: 10px;
-	border-style: solid;
-	border-radius: 5px;
-	width: 75%;
-	height: 75%;
+	color: white;
+	text-decoration: none;
+	padding: 1px;
 }
 
+a:hover, a:active {
+	color: white;
+	font-weight: bold;
+}
+
+.prompt {
+}
+
+.choice {
+}
