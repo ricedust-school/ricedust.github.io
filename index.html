@@ -1,37 +1,18 @@
-<!DOCTYPE html>
-<html lang="en-US">
-	<head>
-		<title>8 Days to Kyiv</title>
-		<link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-	    <audio id="audio" src="music/darkisthenight.mp3" autoplay loop></audio>
-		<script>
-			var audio = document.getElementById("audio");
-			var isPlaying = false;
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-			function togglePlay() {
-			  isPlaying ? audio.pause() : audio.play();
-			};
+  <!-- PLEASE NO CHANGES BELOW THIS LINE (UNTIL I SAY SO) -->
+  <script language="javascript" type="text/javascript" src="libraries/p5.min.js"></script>
+  <script language="javascript" type="text/javascript" src="p5js-temp-selfportrait11471933367507012977.js"></script>
+  <!-- OK, YOU CAN MAKE CHANGES BELOW THIS LINE AGAIN -->
 
-			audio.onplaying = function() {
-			  isPlaying = true;
-			};
-			audio.onpause = function() {
-			  isPlaying = false;
-			};
-		</script>
-		<div>
-			<h1>
-				8 Days to <span style="color: red;">Kyiv</span>
-			</h1>
-			<span style="text-align: center;">
-				<a href="day1.html">> Start</a>
-				<a href="levels.html">> Levels</a>
-				<a href="about.html">> About</a>
-			</span>
-		</div>
-		<a href="javascript:;" onClick="togglePlay()"><img class="sound" src="images/sound.png"></a>
-	</body>
-</html> 
+  <!-- This line removes any default padding and style.
+       You might only need one of these values set. -->
+  <style> body { padding: 0; margin: 0; background-color: black;} </style>
+</head>
+
+<body>
+</body>
+</html>
