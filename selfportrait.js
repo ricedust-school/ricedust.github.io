@@ -11,7 +11,7 @@ function setup() {
   shadow();
   midtone();
   highlight();
-  // guide();
+  //guide();
 }
 
 // sets pencil settings
@@ -268,8 +268,8 @@ function black() {
   //line(370, 391, 373, 396);
   
   // iris
-  line(279, 288, 277, 308);
-  line(400, 306, 398, 285);
+  line(276, 288, 277, 308);
+  line(400, 306, 400, 287);
   
   // shirt
   line(397, 514, 406, 549);
