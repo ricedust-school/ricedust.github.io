@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<title>8 Days to Kyiv</title>
+		<link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<audio id="audio" src="music/worldonfire.mp3" autoplay loop></audio>
+		<script>
+			var audio = document.getElementById("audio");
+			var isPlaying = false;
+
+			function togglePlay() {
+			  isPlaying ? audio.pause() : audio.play();
+			};
+
+			audio.onplaying = function() {
+			  isPlaying = true;
+			};
+			audio.onpause = function() {
+			  isPlaying = false;
+			};
+		</script>
+		<div>
+			<img src="images/sunflower7.png">
+		</div>
+		<a href="index.html" style="padding: 20px;">< go home</a>
+		<a href="javascript:;" onClick="togglePlay()"><img class="sound" src="images/sound.png"></a>
+	</body>
+</html> 

@@ -1,0 +1,51 @@
+body {
+	font-size: 150%;
+	background-color: black;
+	color: white;
+	font-family: Courier New, monospace;
+}
+
+div {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+}
+
+a {
+	
+	color: white;
+	display: block;
+	text-decoration: none;
+	padding: 1px;
+}
+
+a:hover, a:active {
+	color: white;
+	font-weight: bold;
+}
+
+.sound {
+	width: 40px;
+	position: fixed;
+	left: 50%;
+	bottom: 20px;
+	transform: translate(-50%, -50%);
+	margin: 0 auto;
+}
+
+.day {
+	font-size: xx-large;
+}
+
+.prompt {
+}
+
+.choice {
+}
+
+.read {
+	font-weight: bold;
+	color: gray;
+	text-indent: 10px;
+}
