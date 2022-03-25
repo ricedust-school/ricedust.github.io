@@ -19,13 +19,15 @@ function setup() {
 
 function centerCanvas(cnv) {
   var x = (windowWidth - width) / 2;
-  var y = (windowHeight - height) / 2;
+  var y = 250;
   cnv.position(x, y);
 }
 
 function draw() {
-  if (keyIsPressed) {
+  if (keyIsPressed && key != 'x') {
     choice = key; // set choice to the key that was pressed
+  }
+  else if (keyIsPressed) {
     clear_print(); // check to see if it is clear screen or save image
   }
   if (mouseIsPressed) {

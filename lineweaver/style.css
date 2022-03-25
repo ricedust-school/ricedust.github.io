@@ -1,0 +1,20 @@
+body {
+	text-align: center;
+	line-height: 150%;
+}
+
+h1 {
+	color: white;
+	font-family: Garamond, serif;
+	font-size: 40px;
+}
+
+p {
+	font-family: Helvetica, sans-serif;
+	color: #a1a1a1;
+}
+
+h3 {
+	font-family: Helvetica, sans-serif;
+	color: white;
+}
