@@ -1,7 +1,7 @@
 function setup() {
   let cnv = createCanvas(600, 600);
   let newCanvasX = (windowWidth - 600)/2;
-  let newCanvasY = (windowHeight - 600)/2;
+  let newCanvasY = 100;
   cnv.position(newCanvasX, newCanvasY);
   strokeCap(SQUARE);
   
@@ -14,13 +14,13 @@ function setup() {
   //guide();
 }
 
-// sets pencil settings
+// sets pencil tool settings
 function pencil() {
   strokeWeight(2);
   stroke(0);
 }
 
-// sets charcoal settings
+// sets brush opacity
 function charcoal(tone) {
   if (tone === 'black') {
     stroke(0, 150);
