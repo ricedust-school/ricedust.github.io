@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Mashup - RICEDUST</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="p-5 text-center">
+      <h2><strong>RICEDUST</strong></h2>
+    </div>
+  </div>
+  <div class="p-5 container-fluid bg-black">
+    <div class="pt-3 text-center text-white">
+      <h3 class="">Judge, Jury, and Executioner</h3>
+      <p class="pt-3 text-white-50 lead">
+        A mashup of Trial of George Jacobs by Thomkins H. Matteson (1813–1884 CE), which depicts the Salem Witch Trials. I've observed that the Wojak and its variations have become a sort of cheap rhetorical ammunition on various platforms (though most originate from 4chan), so I've used it here to portray internet vigilantism, online witch hunts, and social media herd mentality.
+      </p>
+    </div>
+    <!-- Carousel -->
+    <div id="mashup" class="pt-5 carousel slide" data-bs-ride="carousel">
+
+      <!-- Indicators/dots -->
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#mashup" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#mashup" data-bs-slide-to="1"></button>
+      </div>
+
+      <!-- The slideshow/carousel -->
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="images/mashup.png" alt="Mashup" class="d-block w-100">
+        </div>
+        <div class="carousel-item">
+          <img src="images/og_mashup.jpg" alt="Original Artwork" class="d-block w-100">
+        </div>
+      </div>
+
+      <!-- Left and right controls/icons -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#mashup" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#mashup" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
+  </div>
+</body>
