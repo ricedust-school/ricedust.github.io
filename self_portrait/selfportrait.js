@@ -1,8 +1,21 @@
+/* 
+ * README: 
+ *
+ * 1 ) Requires p5.js library.
+ * 
+ * 2 ) Must specify id="portraitContainer" 
+ *     inside div to display in HTML.
+*/ 
+
 function setup() {
   let cnv = createCanvas(600, 600);
+  cnv.parent('portraitContainer');
+  
+  // centers canvas
   let newCanvasX = (windowWidth - 600)/2;
   let newCanvasY = 100;
   cnv.position(newCanvasX, newCanvasY);
+
   strokeCap(SQUARE);
   
   // calls drawing functions
@@ -20,7 +33,7 @@ function pencil() {
   stroke(0);
 }
 
-// sets brush opacity
+// sets brush opacity settings
 function charcoal(tone) {
   if (tone === 'black') {
     stroke(0, 150);

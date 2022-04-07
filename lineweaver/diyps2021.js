@@ -1,13 +1,23 @@
+/* 
+ * README: 
+ *
+ * 1 ) Requires p5.js library.
+ * 
+ * 2 ) Must specify id="canvas" 
+ *     inside div to display in HTML.
+*/
+
 var img;
-var initials ='sn'; // your initials
+var initials ='sn';
 var choice = '1'; // starting choice, so it is not empty
 var screenbg = 255; // white background
 var lastscreenshot=61; // last screenshot never taken
 
 function setup() {
   var cnv = createCanvas(800, 800);
+  cnv.parent('canvas');
   centerCanvas(cnv);
-  background(screenbg);   // use our background screen color
+  background(screenbg); // background screen color
   
   rectMode(CORNERS);
   ellipseMode(CORNERS);
@@ -19,7 +29,7 @@ function setup() {
 
 function centerCanvas(cnv) {
   var x = (windowWidth - width) / 2;
-  var y = 250;
+  var y = 350;
   cnv.position(x, y);
 }
 
@@ -36,10 +46,6 @@ function draw() {
 }
 
 function newkeyChoice(toolChoice) { //toolchoice is the key that was pressed
-  // the key mapping if statements that you can change to do anything you want.
-  // just make sure each key option has the a stroke or fill and then what type of 
-  // graphic function
-
   if (toolChoice == '1') { // reflect across x
     line(mouseX, mouseY, pmouseX, pmouseY);
     line(mouseX, height - mouseY, pmouseX, height - pmouseY);
@@ -123,7 +129,7 @@ function clear_print() {
 }
 
 function saveme(){
-    //this will save the name as the intials, date, time and a millis counting number.
+    // this will save the name as the intials, date, time and a millis counting number.
     // it will always be larger in value then the last one.
   filename=initials+day() + hour() + minute() +second();
   if (second()!=lastscreenshot) { // don't take a screenshot if you just took one

@@ -1,36 +1,189 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <title>Lineweaver</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <!-- PLEASE NO CHANGES BELOW THIS LINE (UNTIL I SAY SO) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap library -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- p5.js library -->
   <script language="javascript" type="text/javascript" src="libraries/p5.min.js"></script>
   <script language="javascript" type="text/javascript" src="diyps2021.js"></script>
-  <!-- OK, YOU CAN MAKE CHANGES BELOW THIS LINE AGAIN -->
-
-  <!-- This line removes any default padding and style.
-       You might only need one of these values set. -->
-  <style> body { padding: 0; margin: 0; background-color: 0} </style>
 </head>
 
-<body>
-  <div style="padding: 50px;">
-    <h1 class="title">Lineweaver</h1>
-    <p>
-      A drawing tool created with p5.js where everything you draw is symmetrical.
-      <br>
-      Make effortless patterns, hypnotize yourself, or just enjoy the geometry.
-    </p>
+<body class="bg-black">
+  <div class="p-5 container-fluid bg-black">
+    <div class="pt-3 text-center">
+      <h3 class="text-white">Lineweaver</h3>
+      <p class="py-3 mx-auto text-white-50 lead" style="width: 60vw">
+        A drawing tool built with p5.js where everything you draw is symmetrical.
+        Make effortless patterns, hypnotize yourself, or just enjoy the geometry
+      </p>
+      <h5 class="text-white">Controls</h5>
+      <p class="mx-auto text-white-50">
+        Press 0 - 9 to select a drawing tool.
+        <br>
+        Press X to clear canvas.
+      </p>
+    </div>
   </div>
-  <div style="height: 775px;"></div>
-  <div style="padding: 50px;">
-    <h3>Controls:</h3>
-    <p>
-      Press 0 - 9 to select a brush.
-      <br>
-      Press X to clear the canvas.
-    </p>
+  <div id="canvas" style="height: 825px;"></div>
+  <!-- Show Source Code Button -->
+  <p class="text-center">
+    <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#sourceCode" aria-expanded="false">
+      Show Source Code
+    </button>
+  </p>
+  <div id="sourceCode" class="collapse">
+    <div class="mx-auto d-block card card-body" style="width: 800px;">
+      <pre>
+        <code>
+  /* 
+   * README: 
+   *
+   * 1 ) Requires p5.js library.
+   * 
+   * 2 ) Must specify id="canvas" 
+   *     inside div to display in HTML.
+  */
+
+  var img;
+  var initials ='sn';
+  var choice = '1'; // starting choice, so it is not empty
+  var screenbg = 255; // white background
+  var lastscreenshot=61; // last screenshot never taken
+
+  function setup() {
+    var cnv = createCanvas(800, 800);
+    cnv.parent('canvas');
+    centerCanvas(cnv);
+    background(screenbg); // background screen color
+    
+    rectMode(CORNERS);
+    ellipseMode(CORNERS);
+    
+    stroke(0);
+    strokeWeight(1);
+    fill(0, 0);
+  }
+
+  function centerCanvas(cnv) {
+    var x = (windowWidth - width) / 2;
+    var y = 350;
+    cnv.position(x, y);
+  }
+
+  function draw() {
+    if (keyIsPressed && key != 'x') {
+      choice = key; // set choice to the key that was pressed
+    }
+    else if (keyIsPressed) {
+      clear_print(); // check to see if it is clear screen or save image
+    }
+    if (mouseIsPressed) {
+      newkeyChoice(choice);  // if the mouse is pressed call newkeyChoice
+    }
+  }
+
+  function newkeyChoice(toolChoice) { //toolchoice is the key that was pressed
+    if (toolChoice == '1') { // reflect across x
+      line(mouseX, mouseY, pmouseX, pmouseY);
+      line(mouseX, height - mouseY, pmouseX, height - pmouseY);
+      
+    } else if (toolChoice == '2') { // reflfect across y
+      line(mouseX, mouseY, pmouseX, pmouseY);
+      line(width - mouseX, mouseY, width - pmouseX, pmouseY);
+    
+    } else if (toolChoice == '3' ) { // rotate 180
+      line(mouseX, mouseY, pmouseX, pmouseY);
+      line(width - mouseX, height - mouseY, width - pmouseX, height - pmouseY);
+      
+    } else if (toolChoice == '4') { // rotate 90
+      let originX = width / 2;
+      let originY = height / 2;
+      let x = mouseX - originX;
+      let y = mouseY - originY;
+      let px = pmouseX - originX;
+      let py = pmouseY - originY;
+      line(originX + x, originY + y, originX + px, originY + py);
+      line(originY - y, originX + x, originY - py, originX + px);
+      line(originX - x, originY - y, originX - px, originY - py);
+      line(originY + y, originX - x, originY + py, originX - px);
+      
+    } else if (toolChoice == '5') { // rotate 180 line to origin
+      let originX = width / 2;
+      let originY = height / 2;
+      line(mouseX, mouseY, originX, originY);
+      line(width - mouseX, height - mouseY, originX, originY);
+    
+    } else if (toolChoice == '6') { // rotate 90 line to origin
+      let originX = width / 2;
+      let originY = height / 2;
+      let x = mouseX - originX;
+      let y = mouseY - originY;
+      let px = pmouseX - originX;
+      let py = pmouseY - originY;
+      line(originX + x, originY + y, originX, originY);
+      line(originY - y, originX + x, originX, originY);
+      line(originX - x, originY - y, originX, originY);
+      line(originY + y, originX - x, originX, originY);
+    
+    } else if (key == '7') { // horizontal lines
+      let originX = width / 2;
+      let x = mouseX - originX;
+      let px = pmouseX - originX;
+      line(originX - x, mouseY, originX + x, mouseY);
+      line(originX - px, pmouseY, originX + px, pmouseY);
+    
+    } else if (key == '8') { // vertical lines
+      let originY = height / 2;
+      let y = mouseY - originY;
+      let py = pmouseY - originY;
+      line(mouseX, originY - y, mouseX, originY + y);
+      line(pmouseX, originY - py, pmouseX, originY + py);
+    
+    } else if (toolChoice == '9') { // ellipse
+      let originX = width / 2;
+      let originY = height / 2;
+      let x = mouseX - originX;
+      let y = mouseY - originY;
+      ellipse(originX - x, originY + y, originX + x, originY - y);
+    
+    } else if (toolChoice == '0') { // rect
+      let originX = width / 2;
+      let originY = height / 2;
+      let x = mouseX - originX;
+      let y = mouseY - originY;
+      rect(originX - x, originY + y, originX + x, originY - y);
+    }
+  }
+
+  function clear_print() {
+  // this will do one of two things, x clears the screen by resetting the background
+  // p calls the routine saveme, which saves a copy of the screen
+    if (key == 'x' || key == 'X') {
+      background(screenbg); // set the screen back to the background color
+    } else if (key == 'p' || key == 'P') {
+       saveme();  // call saveme which saves an image of the screen
+    }
+  }
+
+  function saveme(){
+      // this will save the name as the intials, date, time and a millis counting number.
+      // it will always be larger in value then the last one.
+    filename=initials+day() + hour() + minute() +second();
+    if (second()!=lastscreenshot) { // don't take a screenshot if you just took one
+      saveCanvas(filename, 'jpg');
+    }
+    lastscreenshot=second(); // set this to the current second so no more than one per second
+    
+  }
+        </code>
+      </pre>
+    </div>
   </div>
 </body>
 </html>
