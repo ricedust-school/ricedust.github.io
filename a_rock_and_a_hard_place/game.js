@@ -160,7 +160,7 @@ function depleteHealth(toRemove) {
 // ASTEROID FUNCTIONS
 
 function addAsteroids() {
-  let willSpawn = random() < .02 + (time * .00075);
+  let willSpawn = random() < .02 + (time * .001);
   if (willSpawn) {
     let sprite = asteroidSprites[floor(random(asteroidSprites.length))];
     let angle = random(360);
