@@ -206,7 +206,7 @@ function drawBits() {
   noStroke();
   fill('white');
   textSize(30);
-  text('Bits: ' + bits, centerX, height - 190);
+  text('Bits: ' + bits, centerX, height - 120);
   pop();
 }
 
@@ -217,7 +217,7 @@ function drawBuyMinerButton() {
   if (cost == 0) cost = 'FREE';
   else cost = cost + ' Bits';
   buyMinerButton = createButton('Buy Miner (' + cost + ')').center();
-  buyMinerButton.position(buyMinerButton.x, height - 160);
+  buyMinerButton.position(buyMinerButton.x - 150, height - 90);
   buyMinerButton.mousePressed(buyMiner);
 }
 
@@ -256,7 +256,7 @@ function drawBuyRocketButton() {
   if (cost == 0) cost = 'FREE';
   else cost = cost + ' Bits'
   buyRocketButton = createButton('Buy Rocket (' + cost + ')').center();
-  buyRocketButton.position(buyRocketButton.x, height - 90);
+  buyRocketButton.position(buyRocketButton.x + 150, height - 90);
   buyRocketButton.mousePressed(buyRocket);
 }
 
