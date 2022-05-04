@@ -5,7 +5,7 @@ let pixelFont;
 let planetSprite;
 let healthBar;
 
-let planetRadius = 175;
+let planetRadius = 132;
 let asteroidRadius = 32;
 
 let fullHealth = 100000;
@@ -22,6 +22,7 @@ let buyMinerButton;
 let asteroidSprites = [];
 let asteroids = [];
 let asteroidSpeed = 1;
+let asteroidOrbitSpeed = 0.1;
 
 let rocketSprite;
 let rockets = [];
@@ -160,7 +161,7 @@ function depleteHealth(toRemove) {
 // ASTEROID FUNCTIONS
 
 function addAsteroids() {
-  let willSpawn = random() < .02 + (time * .001);
+  let willSpawn = random() < .02 + (time * .00075);
   if (willSpawn) {
     let sprite = asteroidSprites[floor(random(asteroidSprites.length))];
     let angle = random(360);
@@ -184,6 +185,7 @@ function drawAsteroids() {
     image(sprite, 0, 0);
     pop();
 
+    asteroids[i][1] -= asteroidOrbitSpeed;
     asteroids[i][2] -= asteroidSpeed;
 
     if (dist < planetRadius) makeImpact();
@@ -206,7 +208,7 @@ function drawBits() {
   noStroke();
   fill('white');
   textSize(30);
-  text('Bits: ' + bits, centerX, height - 120);
+  text('Bits: ' + bits, centerX, height - 115);
   pop();
 }
 
@@ -217,7 +219,7 @@ function drawBuyMinerButton() {
   if (cost == 0) cost = 'FREE';
   else cost = cost + ' Bits';
   buyMinerButton = createButton('Buy Miner (' + cost + ')').center();
-  buyMinerButton.position(buyMinerButton.x - 150, height - 90);
+  buyMinerButton.position(buyMinerButton.x - 120, height - 90);
   buyMinerButton.mousePressed(buyMiner);
 }
 
@@ -256,7 +258,7 @@ function drawBuyRocketButton() {
   if (cost == 0) cost = 'FREE';
   else cost = cost + ' Bits'
   buyRocketButton = createButton('Buy Rocket (' + cost + ')').center();
-  buyRocketButton.position(buyRocketButton.x + 150, height - 90);
+  buyRocketButton.position(buyRocketButton.x + 120, height - 90);
   buyRocketButton.mousePressed(buyRocket);
 }
 
@@ -281,7 +283,7 @@ function drawRockets() {
   for (let i = 0; i < rockets.length; i++) {
     let sprite = rockets[i][0];
     let angle = rockets[i][1];
-    let dist = -planetRadius - 35;
+    let dist = -planetRadius - 25;
 
     rotate(angle);
     translate(0, dist);
