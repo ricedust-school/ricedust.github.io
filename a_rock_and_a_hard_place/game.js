@@ -3,49 +3,88 @@ let centerY;
 
 let pixelFont;
 let planetSprite;
-let healthBar;
 
 let planetRadius = 132;
 let asteroidRadius = 32;
 
-let fullHealth = 100000;
-let health = 100000;
+let population = 7946363125;
+let populationRate = 0;
 let time = 0;
 
 let bits = 0;
 
-let minerSprites = [];
+let cursorSprites = [];
+let mouseDown = false;
+
 let miners = [];
+let minerSprites = [];
+let pollutionSprites = [];
 let minerCost = 0;
-let buyMinerButton;
+let minerPopulationImpact = 150000;
+let minerCooldown = 60; // interval between adding bits
+let pollutionRate = 420; // time it takes for pollution state to update
+
 
 let asteroidSprites = [];
 let asteroids = [];
+let initialAsteroidSpawnRate = .02;
+let asteroidSpawnRateMultiplier = .00075;
 let asteroidSpeed = 1;
 let asteroidOrbitSpeed = 0.1;
+let asteroidOrbitSpeedVariance = .025;
+let impactAmplitude = 0;
+
+let explosionSprites = [];
+let explosions = [];
 
 let rocketSprite;
 let rockets = [];
 let rocketCost = 0;
+let rocketCostIncrease = 20;
+let defaultRocketDist = -planetRadius - 25;
+let rocketRecoil = 100;
+let rocketCooldown = 60;
+
+
+let buttonSprites = [];
+let buyMinerButton;
 let buyRocketButton;
 
 function preload() { // PRELOAD FUNCTION
   pixelFont = loadFont('assets/pixelfont.ttf');
   planetSprite = loadImage('assets/planet.png');
   backgroundImage = loadImage('assets/space.png');
-  healthBar = loadImage('assets/healthbar.png');
   
+  // load cursor sprites
+  cursorSprites.push(loadImage('assets/cursor.png'));
+  cursorSprites.push(loadImage('assets/click.png'));
+
   // load miner sprites
   minerSprites.push(loadImage('assets/miner1.png'));
   minerSprites.push(loadImage('assets/miner2.png'));
   minerSprites.push(loadImage('assets/miner3.png'));
 
+  // load pollution sprites
+  pollutionSprites.push(loadImage('assets/empty.png'));
+  pollutionSprites.push(loadImage('assets/pollution1.png'));
+  pollutionSprites.push(loadImage('assets/pollution2.png'));
+  pollutionSprites.push(loadImage('assets/pollution3.png'));
+  pollutionSprites.push(loadImage('assets/pollution4.png'));
+  pollutionSprites.push(loadImage('assets/pollution5.png'));
+
   // load asteroid sprites
   asteroidSprites.push(loadImage('assets/asteroid1.png'));
   asteroidSprites.push(loadImage('assets/asteroid2.png'));
   asteroidSprites.push(loadImage('assets/asteroid3.png'));
+  explosionSprites.push(loadImage('assets/explosion1.png'));
+  explosionSprites.push(loadImage('assets/explosion2.png'));
+  explosionSprites.push(loadImage('assets/explosion3.png'));
 
   rocketSprite = loadImage('assets/rocket.png');
+
+  // load button sprites
+  buttonSprites.push(loadImage('assets/button.png'));
+  buttonSprites.push(loadImage('assets/pressedbutton.png'));
 }
 
 function setup() { // SETUP FUNCTION
@@ -58,58 +97,90 @@ function setup() { // SETUP FUNCTION
   textAlign(CENTER);
   textFont(pixelFont);
 
+  // set default cursor
+  cursor('assets/cursor.png');
+
   // assign center variables
   centerX = width / 2;
   centerY = height / 2;
 
-  // draw buttons
-  drawButtons();
-}
-
-function drawButtons() {
-  drawBuyMinerButton();
-  drawBuyRocketButton();
+  // create buttons
+  createBuyRocketButton();
+  createBuyMinerButton();
 }
 
 function draw() { // DRAW FUNCTION
   // background updates
   incrementTime();
-  addBits();
   addAsteroids();
-  depleteHealth(miners.length * 3);
+  updatePopulation();
 
   // visual updates
-  image(backgroundImage, centerX, centerY); 
+  drawSpace();
   drawPlanet();
-  drawAsteroids();
+  updateAsteroids();
   drawHUD();
+  // drawDebug();
 }
 
-function drawPlanet() {
-  push();
-  // rotate about the center
-  imageMode(CENTER);
-  translate(centerX, centerY);
-  rotate(frameCount / 20);
-
-  drawMiners(); // draw miners
-  drawRockets(); // draw rockets
-  image(planetSprite, 0, 0); // draw planet
-  pop();
-
-  /* show planet radius
+function drawDebug() {
+  // show planet radius
   push();
   stroke('white');
   noFill();
   ellipse(centerX, centerY, planetRadius);
   pop();
-  */
+}
+
+function drawSpace() {
+  push();
+  imageMode(CENTER);
+  image(backgroundImage, centerX, centerY);
+  pop();
+}
+
+function drawPlanet() {
+  // calculate asteroid impact rumble
+  if (impactAmplitude > 0) impactAmplitude -= 0.1;
+  let rumbleOffset = impactAmplitude * sin(frameCount * 50);
+
+  push();
+  // rotate about the center
+  imageMode(CENTER);
+  translate(centerX + rumbleOffset, centerY);
+  rotate(frameCount / 20);
+
+  updateRockets();
+  image(planetSprite, 0, 0); // draw planet
+  updatePollution();
+  updateMiners();
+  
+  pop();
 }
 
 function drawHUD() {
   drawTime();
   drawBits();
-  drawHealthBar();
+  drawPopulation();
+  drawBuyMinerButton();
+  drawBuyRocketButton();
+}
+
+// MOUSE FUNCTIONS
+
+function mousePressed() {
+  // update cursor
+  cursor('assets/click.png');
+  
+  mouseDown = true;
+  if (buyMinerButton.over()) buyMinerButton.press();
+  if (buyRocketButton.over()) buyRocketButton.press();
+}
+
+function mouseReleased() {
+  // revert cursor to default
+  cursor('assets/cursor.png');
+  mouseDown = false;
 }
 
 // TIMER FUNCTIONS
@@ -132,175 +203,139 @@ function drawTime() {
   textAlign(LEFT);
   noStroke();
   fill('white');
-  textSize(50);
-  text(minutes + ':' + seconds, 30, 80);
+  textSize(40);
+  text(minutes + ':' + seconds, 30, 65);
   pop();
 }
 
-// HEALTH FUNCTIONS
+// POPULATION FUNCTIONS
 
-function drawHealthBar() {
-  let healthBarY = 65;
-  let healthBarLength = 356 * (health / fullHealth);
+function updatePopulation() {
+  population += populationRate;
+  if (population <= 0) noLoop();
+}
 
-  image(healthBar, centerX, healthBarY);
-
+function drawPopulation() {
   push();
-  fill('white');
   noStroke();
-  translate(centerX - 162, healthBarY - 5);
-  rect(0, 0, healthBarLength, 10);
+  fill('white');
+  textSize(20);
+  text('Population:', centerX, 80);
+  textSize(25);
+  if (population > 0) text(round(population / 1000000000, 2) + " billion", centerX, 120);
+  else text(0, centerX, 110);
   pop();
-}
-
-function depleteHealth(toRemove) {
-  health -= toRemove;
-  if (health <= 0) noLoop();
-}
-
-// ASTEROID FUNCTIONS
-
-function addAsteroids() {
-  let willSpawn = random() < .02 + (time * .00075);
-  if (willSpawn) {
-    let sprite = asteroidSprites[floor(random(asteroidSprites.length))];
-    let angle = random(360);
-    let dist = centerX * 1.25;
-    asteroids.push([sprite, angle, dist]);
-  }
-}
-
-function drawAsteroids() {
-  
-  for (let i = 0; i < asteroids.length; i++) {
-    let sprite = asteroids[i][0];
-    let angle = asteroids[i][1];
-    let dist = asteroids[i][2];
-
-    push();
-    imageMode(CENTER);
-    translate(centerX, centerY);
-    rotate(angle);
-    translate(0, dist);
-    image(sprite, 0, 0);
-    pop();
-
-    asteroids[i][1] -= asteroidOrbitSpeed;
-    asteroids[i][2] -= asteroidSpeed;
-
-    if (dist < planetRadius) makeImpact();
-  }
-}
-
-function makeImpact() {
-  asteroids.shift();
-  health -= 10000;
 }
 
 // BIT FUNCTIONS
-
-function addBits() {
-  if (frameCount % 60 == 0) bits += miners.length;
-}
 
 function drawBits() {
   push();
   noStroke();
   fill('white');
-  textSize(30);
+  textSize(25);
   text('Bits: ' + bits, centerX, height - 115);
   pop();
 }
 
 // MINER FUNCTIONS
 
-function drawBuyMinerButton() {
-  let cost = minerCost;
-  if (cost == 0) cost = 'FREE';
-  else cost = cost + ' Bits';
-  buyMinerButton = createButton('Buy Miner (' + cost + ')').center();
-  buyMinerButton.position(buyMinerButton.x - 120, height - 90);
-  buyMinerButton.mousePressed(buyMiner);
-}
-
 function buyMiner() {
   if (bits >= minerCost) {
     bits -= minerCost;
     minerCost += 5;
+    populationRate -= minerPopulationImpact;
 
-    // add miner to the miners array with a sprite and a random angle
-    let sprite = minerSprites[floor(random(minerSprites.length))];
-    let angle = random(360);
-    miners.push([sprite, angle]);
-    
-    drawBuyMinerButton();
+    miners.push(new Miner());
   }
 }
 
-function drawMiners() {
-  // for each miner in the miner array, draw the sprite and rotate accordingly
-  
+function updatePollution() {
+  // for each miner in the miner array, update pollution and draw the pollution
   for (let i = 0; i < miners.length; i++) {
-    let sprite = miners[i][0];
-    let angle = miners[i][1];
-    
-    rotate(angle);
-    image(sprite, 0, 0);
-    rotate(-angle);
+    let miner = miners[i];
+    miner.pollute();
+    miner.drawPollution();
   }
-  
+}
+
+function updateMiners() {
+  // for each miner in the miner array, mine bits and draw the miner
+  for (let i = 0; i < miners.length; i++) {
+    let miner = miners[i];
+    miner.mine();
+    miner.drawMiner();
+  }
+}
+
+// ASTEROID FUNCTIONS
+
+function addAsteroids() {
+  let willSpawn = random() < initialAsteroidSpawnRate + (time * asteroidSpawnRateMultiplier);
+  if (willSpawn) asteroids.push(new Asteroid());
+}
+
+function updateAsteroids() {
+  asteroids.forEach(element => element.draw());
+  explosions.forEach(element => element.draw());
+  Asteroid.removeAllExploded();
 }
 
 // ROCKET FUNCTIONS
 
-function drawBuyRocketButton() {
-  let cost = rocketCost;
-  if (cost == 0) cost = 'FREE';
-  else cost = cost + ' Bits'
-  buyRocketButton = createButton('Buy Rocket (' + cost + ')').center();
-  buyRocketButton.position(buyRocketButton.x + 120, height - 90);
-  buyRocketButton.mousePressed(buyRocket);
-}
-
 function buyRocket() {
   if (bits >= rocketCost) {
     bits -= rocketCost;
-    rocketCost += 15;
-    
-    // add rocket to the rockets array with a sprite and a random angle
-    let sprite = rocketSprite;
-    let angle = random(360);
-    let cooldown = 60;
-    rockets.push([sprite, angle, cooldown]);
-    
-    drawBuyRocketButton();
+    rocketCost += rocketCostIncrease;
+    rockets.push(new Rocket());
   }
+  // rockets.push(new Rocket());
 }
 
-function drawRockets() {
-  // for each rocket in the rockets array, draw the sprite and rotate accordingly
-  
+function updateRockets() {
+  // for each rocket in the rockets array, fire rockets and draw the sprite
   for (let i = 0; i < rockets.length; i++) {
-    let sprite = rockets[i][0];
-    let angle = rockets[i][1];
-    let dist = -planetRadius - 25;
-
-    rotate(angle);
-    translate(0, dist);
-    image(sprite, 0, 0);
-    translate(0, -dist);
-    rotate(-angle);
-
-    fireRocket(i);
+    rockets[i].fire();
+    rockets[i].draw();
   }
-  
-  function fireRocket(index) {
-    rockets[index][2] -= 1;
-    if (rockets[index][2] <= 0) {
-      asteroids.shift();
-      rockets[index][2] = 60;
-    }
-
-  }
-
 }
+
+// BUTTON FUNCTIONS
+
+function createBuyMinerButton() {
+  buyMinerButton = new Button(centerX - 90, height - 60, buyMiner);
+  buyMinerButton.addText("Buy Miner", buyMinerButton.x, buyMinerButton.y - 9, 18);
+  buyMinerButton.addText("(Free)", buyMinerButton.x, buyMinerButton.y + 10, 13);
+}
+
+function createBuyRocketButton() {
+  buyRocketButton = new Button(centerX + 90, height - 60, buyRocket);
+  buyRocketButton.addText("Buy Rocket", buyRocketButton.x, buyRocketButton.y - 9, 18);
+  buyRocketButton.addText("(Free)", buyRocketButton.x, buyRocketButton.y + 10, 13);
+}
+
+function drawBuyMinerButton() {
+  let cost = minerCost;
+  if (cost == 0) cost = 'FREE';
+  else cost = cost + ' Bits';
+
+  if (bits < minerCost) buyMinerButton.isLocked = true;
+  else buyMinerButton.isLocked = false;
+
+  buyMinerButton.updateText(1, '(' + cost + ')');
+  buyMinerButton.draw();
+}
+
+function drawBuyRocketButton() {
+  let cost = rocketCost;
+  if (cost == 0) cost = 'Free';
+  else cost = cost + ' Bits'
+
+  if (bits < rocketCost) buyRocketButton.isLocked = true;
+  else buyRocketButton.isLocked = false;
+
+  buyRocketButton.updateText(1, '(' + cost + ')');
+  buyRocketButton.draw();
+}
+
+
