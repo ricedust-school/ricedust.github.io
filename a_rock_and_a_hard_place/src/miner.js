@@ -10,7 +10,7 @@ class Miner {
 
   // create a miner using one of the miner sprites at a random location
   constructor() {
-    this.sprite = minerSprites[floor(random(minerSprites.length))];
+    this.sprite = minerSprites[0];//minerSprites[floor(random(minerSprites.length))];
     this.angle = random(360);
 
     this.cooldown = minerCooldown;

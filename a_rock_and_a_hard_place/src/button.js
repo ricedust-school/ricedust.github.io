@@ -26,7 +26,7 @@ class Button {
   // calls the function and depresses the button provided it isn't locked
   press() {
     if (!this.isLocked) {
-      // this.buttonFunction();
+      this.buttonFunction();
       this.isPressed = true;
       this.img = buttonSprites[1];
     }
