@@ -34,7 +34,7 @@ let asteroidSpeed = 1;
 let asteroidInitialOrbitSpeed = .03;
 let asteroidOrbitSpeedMultiplier = 1.006;
 let asteroidMaxSpinSpeed = 2;
-let asteroidImpactPower = 3;
+let asteroidImpactPower = 5;
 
 let explosionSprites = [];
 let explosions = [];
