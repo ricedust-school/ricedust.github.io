@@ -20,6 +20,7 @@ let miners = [];
 let minerSprites = [];
 let pollutionSprites = [];
 let minerCost = 0;
+let minerCostIncrease = 5;
 let minerPopulationImpact = 150000;
 let minerCooldown = 60; // interval between adding bits
 let pollutionRate = 420; // time it takes for pollution state to update
@@ -76,6 +77,8 @@ function preload() { // PRELOAD FUNCTION
   asteroidSprites.push(loadImage('assets/asteroid1.png'));
   asteroidSprites.push(loadImage('assets/asteroid2.png'));
   asteroidSprites.push(loadImage('assets/asteroid3.png'));
+
+  //load explosion sprites
   explosionSprites.push(loadImage('assets/explosion1.png'));
   explosionSprites.push(loadImage('assets/explosion2.png'));
   explosionSprites.push(loadImage('assets/explosion3.png'));
@@ -105,8 +108,8 @@ function setup() { // SETUP FUNCTION
   centerY = height / 2;
 
   // create buttons
-  createBuyRocketButton();
   createBuyMinerButton();
+  createBuyRocketButton();
 }
 
 function draw() { // DRAW FUNCTION
@@ -243,7 +246,7 @@ function drawBits() {
 function buyMiner() {
   if (bits >= minerCost) {
     bits -= minerCost;
-    minerCost += 5;
+    minerCost += minerCostIncrease;
     populationRate -= minerPopulationImpact;
 
     miners.push(new Miner());

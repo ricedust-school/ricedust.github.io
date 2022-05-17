@@ -7,8 +7,6 @@ class Asteroid {
   isExploding;
   explosionFrame;
 
-  isInactive;
-
   constructor() {
     this.sprite = asteroidSprites[floor(random(asteroidSprites.length))];
     this.angle = random(360);
@@ -17,8 +15,6 @@ class Asteroid {
 
     this.isExploding = false;
     this.explosionFrame = 0;
-
-    this.isInactive = false;
   }
   
   draw() {
