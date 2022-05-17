@@ -14,7 +14,6 @@ let time = 0;
 let bits = 100;
 
 let cursorSprites = [];
-let mouseDown = false;
 
 let miners = [];
 let minerSprites = [];
@@ -257,18 +256,16 @@ function buyMiner() {
 function updatePollution() {
   // for each miner in the miner array, update pollution and draw the pollution
   for (let i = 0; i < miners.length; i++) {
-    let miner = miners[i];
-    miner.pollute();
-    miner.drawPollution();
+    miners[i].pollute();
+    miners[i].drawPollution();
   }
 }
 
 function updateMiners() {
   // for each miner in the miner array, mine bits and draw the miner
   for (let i = 0; i < miners.length; i++) {
-    let miner = miners[i];
-    miner.mine();
-    miner.drawMiner();
+    miners[i].mine();
+    miners[i].drawMiner();
   }
 }
 
