@@ -12,7 +12,7 @@ let population = 7946363125;
 let populationRate = 0;
 let time = 0;
 
-let bits = 102;
+let bits = 0;
 
 let cursorSprites = [];
 
@@ -31,8 +31,9 @@ let asteroids = [];
 let initialAsteroidSpawnRate = .02;
 let asteroidSpawnRateMultiplier = .00075;
 let asteroidSpeed = 1;
-let asteroidOrbitSpeed = 0.1;
-let asteroidOrbitSpeedVariance = .025;
+let asteroidInitialOrbitSpeed = .03;
+let asteroidOrbitSpeedMultiplier = 1.006;
+let asteroidMaxSpinSpeed = 2;
 let asteroidImpactPower = 3;
 
 let explosionSprites = [];
