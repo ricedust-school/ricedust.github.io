@@ -29,7 +29,6 @@ class Button {
       this.buttonFunction();
       this.isPressed = true;
       this.img = buttonSprites[1];
-      this.yOffSet = 8;
     }
   }
 
@@ -37,7 +36,6 @@ class Button {
   release() {
     this.isPressed = false;
     this.img = buttonSprites[0];
-    this.yOffSet = 0;
   }
 
   // add a text element to the button with a size
@@ -54,8 +52,13 @@ class Button {
   draw() {
     push()
     if (this.isLocked) tint(255 / 2);
+
+    if (this.isPressed) this.yOffSet = 8;
+    else this.yOffSet = 0;
+
     image(this.img, this.x, this.y);
     pop();
+
     this.#drawText();
   }
 
