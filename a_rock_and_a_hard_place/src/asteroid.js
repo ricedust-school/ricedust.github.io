@@ -33,14 +33,8 @@ class Asteroid {
     if (!this.isExploding) {
       this.dist -= asteroidSpeed;
       this.angle -= this.orbitSpeed;
-      if (this.dist < planetRadius) Asteroid.#makeImpact();
+      if (this.dist < planetRadius) planet.makeImpact();
     }
-  }
-
-  static #makeImpact() { 
-    asteroids.shift();
-    population -= 800000000;
-    impactAmplitude = 3;
   }
 
   // updates the asteroid state to exploding and moves it to the explosions array

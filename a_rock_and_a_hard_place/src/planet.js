@@ -1,21 +1,21 @@
 class Planet {
-  rumbleOffset;
-  impactAmplitude;
+  rumbleAmplitude;
 
   constructor() {
-    this.rumbleOffset = 0;
-    this.impactAmplitude 
+    this.rumbleAmplitude = 0;
+    this.miners = [];
+    this.rockets = [];
   }
   
   draw() {
     // calculate asteroid impact rumble
-    if (impactAmplitude > 0) impactAmplitude -= 0.1;
-    let rumbleOffset = impactAmplitude * sin(frameCount * 50);
+    if (this.rumbleAmplitude > 0) this.rumbleAmplitude -= 0.1;
+    let xOffset = this.rumbleAmplitude * sin(frameCount * 50);
 
     push();
     // rotate about the center
     imageMode(CENTER);
-    translate(centerX + rumbleOffset, centerY);
+    translate(centerX + xOffset, centerY);
     rotate(frameCount / 20);
 
     updateRockets();
@@ -24,5 +24,11 @@ class Planet {
     updateMiners();
     
     pop();
+  }
+
+  makeImpact() { 
+    asteroids.shift();
+    population -= 800000000;
+    this.rumbleAmplitude = asteroidImpactPower;
   }
 }

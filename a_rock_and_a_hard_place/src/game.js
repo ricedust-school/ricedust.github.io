@@ -2,8 +2,9 @@ let centerX;
 let centerY;
 
 let pixelFont;
-let planetSprite;
 
+let planet;
+let planetSprite;
 let planetRadius = 132;
 let asteroidRadius = 32;
 
@@ -32,13 +33,13 @@ let asteroidSpawnRateMultiplier = .00075;
 let asteroidSpeed = 1;
 let asteroidOrbitSpeed = 0.1;
 let asteroidOrbitSpeedVariance = .025;
-let impactAmplitude = 0;
+let asteroidImpactPower = 3;
 
 let explosionSprites = [];
 let explosions = [];
 
-let rocketSprite;
 let rockets = [];
+let rocketSprite;
 let rocketCost = 0;
 let rocketCostIncrease = 20;
 let defaultRocketDist = -planetRadius - 25;
@@ -64,6 +65,9 @@ function preload() { // PRELOAD FUNCTION
   minerSprites.push(loadImage('assets/miner2.png'));
   minerSprites.push(loadImage('assets/miner3.png'));
 
+  // load rocket sprite
+  rocketSprite = loadImage('assets/rocket.png');
+
   // load pollution sprites
   pollutionSprites.push(loadImage('assets/empty.png'));
   pollutionSprites.push(loadImage('assets/pollution1.png'));
@@ -81,8 +85,6 @@ function preload() { // PRELOAD FUNCTION
   explosionSprites.push(loadImage('assets/explosion1.png'));
   explosionSprites.push(loadImage('assets/explosion2.png'));
   explosionSprites.push(loadImage('assets/explosion3.png'));
-
-  rocketSprite = loadImage('assets/rocket.png');
 
   // load button sprites
   buttonSprites.push(loadImage('assets/button.png'));
@@ -106,6 +108,9 @@ function setup() { // SETUP FUNCTION
   centerX = width / 2;
   centerY = height / 2;
 
+  // create planet
+  planet = new Planet();
+
   // create buttons
   createBuyMinerButton();
   createBuyRocketButton();
@@ -119,13 +124,14 @@ function draw() { // DRAW FUNCTION
 
   // visual updates
   drawSpace();
-  drawPlanet();
+  planet.draw();
   updateAsteroids();
   drawHUD();
-  // drawDebug();
+  // drawPlanetRadius();
 }
 
-function drawDebug() {
+// debug tool to help visualize planet radius
+function drawPlanetRadius() {
   // show planet radius
   push();
   stroke('white');
@@ -138,25 +144,6 @@ function drawSpace() {
   push();
   imageMode(CENTER);
   image(backgroundImage, centerX, centerY);
-  pop();
-}
-
-function drawPlanet() {
-  // calculate asteroid impact rumble
-  if (impactAmplitude > 0) impactAmplitude -= 0.1;
-  let rumbleOffset = impactAmplitude * sin(frameCount * 50);
-
-  push();
-  // rotate about the center
-  imageMode(CENTER);
-  translate(centerX + rumbleOffset, centerY);
-  rotate(frameCount / 20);
-
-  updateRockets();
-  image(planetSprite, 0, 0); // draw planet
-  updatePollution();
-  updateMiners();
-  
   pop();
 }
 
