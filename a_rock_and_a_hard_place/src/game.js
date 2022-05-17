@@ -11,7 +11,7 @@ let population = 7946363125;
 let populationRate = 0;
 let time = 0;
 
-let bits = 101;
+let bits = 102;
 
 let cursorSprites = [];
 
