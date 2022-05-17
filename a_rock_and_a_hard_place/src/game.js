@@ -175,7 +175,6 @@ function mousePressed() {
   // update cursor
   cursor('assets/click.png');
   
-  mouseDown = true;
   if (buyMinerButton.over()) buyMinerButton.press();
   if (buyRocketButton.over()) buyRocketButton.press();
 }
@@ -183,7 +182,9 @@ function mousePressed() {
 function mouseReleased() {
   // revert cursor to default
   cursor('assets/cursor.png');
-  mouseDown = false;
+
+  buyMinerButton.release();
+  buyRocketButton.release();
 }
 
 // TIMER FUNCTIONS

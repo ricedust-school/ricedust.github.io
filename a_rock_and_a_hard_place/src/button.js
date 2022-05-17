@@ -20,13 +20,24 @@ class Button {
     this.yOffSet = 0;
 
     this.isLocked = false;
+    this.isPressed = false;
   }
   
-  // calls the function assigned to the button
+  // calls the function and depresses the button provided it isn't locked
   press() {
-    if (!this.isLocked) this.buttonFunction();
-    this.img = buttonSprites[1];
-    this.yOffSet = 8;
+    if (!this.isLocked) {
+      this.buttonFunction();
+      this.isPressed = true;
+      this.img = buttonSprites[1];
+      this.yOffSet = 8;
+    }
+  }
+
+  // resets the button to the default state
+  release() {
+    this.isPressed = false;
+    this.img = buttonSprites[0];
+    this.yOffSet = 0;
   }
 
   // add a text element to the button with a size
@@ -34,7 +45,7 @@ class Button {
     this.text.push([message, x, y, size]);
   }
 
-  // change a text element, specified by an index
+  // change a text element's message, specified by an index
   updateText(index, message) {
     this.text[index][0] = message;
   }
@@ -42,25 +53,13 @@ class Button {
   // display the button
   draw() {
     push()
-    if (!this.isLocked) this.#updateButtonState();
-    else tint(255 / 2);
-
+    if (this.isLocked) tint(255 / 2);
     image(this.img, this.x, this.y);
-    this.#drawText();
     pop();
+    this.#drawText();
   }
 
-  #updateButtonState() {
-    if (this.over() && mouseDown) {
-      this.img = buttonSprites[1];
-      this.yOffSet = 8;
-    }
-    else {
-      this.img = buttonSprites[0];
-      this.yOffSet = 0;
-    }
-  }
-
+  // displays text with an offset depending on the button's state
   #drawText() {
     push();
     noStroke();
