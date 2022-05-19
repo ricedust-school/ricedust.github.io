@@ -14,7 +14,7 @@ class Asteroid {
     this.sprite = asteroidSprites[floor(random(asteroidSprites.length))];
     this.angle = random(360);
     this.dist = centerX * 1.25;
-    this.orbitSpeed = asteroidInitialOrbitSpeed;
+    this.orbitSpeed = random(asteroidMinOrbitSpeed, asteroidMaxOrbitSpeed);
 
     this.spin = 0;
     this.spinSpeed = random(-asteroidMaxSpinSpeed, asteroidMaxSpinSpeed);
@@ -45,9 +45,11 @@ class Asteroid {
     if (!this.isExploding) {
       this.dist -= asteroidSpeed;
       this.angle -= this.orbitSpeed;
-      this.orbitSpeed *= asteroidOrbitSpeedMultiplier;
       this.spin += this.spinSpeed;
-      if (this.dist <= planetRadius) planet.makeImpact();
+      if (this.dist <= planetRadius) {
+        planet.makeImpact();
+        newsTicker.makeImpact();
+      }
     }
   }
 
@@ -57,8 +59,6 @@ class Asteroid {
   }
 
   static removeAllExploded() {
-    if (explosions.length > 0) {
-      while (explosions.length > 0 && explosions[0].explosionFrame > 2) explosions.shift();
-    }
+    while (explosions.length > 0 && explosions[0].explosionFrame > 2) explosions.shift();
   }
 }

@@ -1,10 +1,12 @@
 class Planet {
+  x;
+  y;
   rumbleAmplitude;
 
   constructor() {
+    this.x = centerX;
+    this.y = centerY;
     this.rumbleAmplitude = 0;
-    this.miners = [];
-    this.rockets = [];
   }
   
   draw() {
@@ -15,7 +17,7 @@ class Planet {
     push();
     // rotate about the center
     imageMode(CENTER);
-    translate(centerX + xOffset, centerY);
+    translate(this.x + xOffset, this.y);
     rotate(frameCount / 20);
 
     updateRockets();
@@ -28,7 +30,17 @@ class Planet {
 
   makeImpact() { 
     asteroids.shift();
-    population -= 800000000;
+    population -= asteroidPopulationImpact;
     this.rumbleAmplitude = asteroidImpactPower;
+  }
+
+  // debug tool to help visualize planet radius
+  static drawPlanetRadius() {
+    // show planet radius
+    push();
+    stroke('white');
+    noFill();
+    ellipse(this.x, this.y, planetRadius);
+    pop();
   }
 }

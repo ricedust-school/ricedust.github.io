@@ -1,8 +1,0 @@
-@font-face {
-	font-family: pixelFont;
-	src: url("assets/pixelfont.ttf");
-}
-
-body {
-	font-family: "pixelFont";
-}

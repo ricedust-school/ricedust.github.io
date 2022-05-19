@@ -3,14 +3,26 @@ let centerY;
 
 let pixelFont;
 
+let gameState = 0;
+let apocalypseHasStarted = false;
+let gameIsOver = false;
+let isOnEndScreen = false;
+
+let transparency = 0;
+let isTransitioning = false;
+let fadeSpeed = 5;
+
 let planet;
 let planetSprite;
 let planetRadius = 132;
 let asteroidRadius = 32;
 
-let population = 7946363125;
+let initialPopulation = 7946363125;
+let population = initialPopulation;
 let populationRate = 0;
+
 let time = 0;
+let timeSurvived = 0;
 
 let bits = 0;
 
@@ -25,16 +37,16 @@ let minerPopulationImpact = 150000;
 let minerCooldown = 60; // interval between adding bits
 let pollutionRate = 420; // time it takes for pollution state to update
 
-
 let asteroidSprites = [];
 let asteroids = [];
-let initialAsteroidSpawnRate = .02;
-let asteroidSpawnRateMultiplier = .00075;
+let initialAsteroidSpawnRate = .01;
+let asteroidSpawnRateMultiplier = .0008;
 let asteroidSpeed = 1;
-let asteroidInitialOrbitSpeed = .03;
-let asteroidOrbitSpeedMultiplier = 1.006;
+let asteroidMinOrbitSpeed = 0.1;
+let asteroidMaxOrbitSpeed = 0.3;
 let asteroidMaxSpinSpeed = 2;
 let asteroidImpactPower = 5;
+let asteroidPopulationImpact = 800000000;
 
 let explosionSprites = [];
 let explosions = [];
@@ -47,10 +59,24 @@ let defaultRocketDist = -planetRadius - 25;
 let rocketRecoil = 100;
 let rocketCooldown = 60;
 
-
 let buttonSprites = [];
 let buyMinerButton;
 let buyRocketButton;
+let playButton;
+let replayButton;
+
+let newsTicker;
+let newsTickerHeight = 40;
+let newsTickerBorder = 4;
+let scrollSpeed = 2;
+let headlineSize = 18;
+let headlineBuffer = 100;
+let stage1Threshold = 6000000000;
+let stage2Threshold = 2000000000;
+let headlines = [];
+let impactHeadlines = [];
+
+let moonSprite;
 
 function preload() { // PRELOAD FUNCTION
   pixelFont = loadFont('assets/pixelfont.ttf');
@@ -90,6 +116,16 @@ function preload() { // PRELOAD FUNCTION
   // load button sprites
   buttonSprites.push(loadImage('assets/button.png'));
   buttonSprites.push(loadImage('assets/pressedbutton.png'));
+
+  // load headlines
+  headlines.push(loadStrings('headlines/stage0.txt'));
+  headlines.push(loadStrings('headlines/stage1.txt'));
+  headlines.push(loadStrings('headlines/stage2.txt'));
+  headlines.push(loadStrings('headlines/stage3.txt'));
+  impactHeadlines = loadStrings('headlines/impact.txt');
+
+  // load moon sprite
+  moonSprite = loadImage('assets/moon.png');
 }
 
 function setup() { // SETUP FUNCTION
@@ -111,16 +147,74 @@ function setup() { // SETUP FUNCTION
 
   // create planet
   planet = new Planet();
+  planet.y = height + planetRadius; // reposition for title screen
 
   // create buttons
-  createBuyMinerButton();
-  createBuyRocketButton();
+  createButtons();
+
+  // create news ticker
+  newsTicker = new NewsTicker();
 }
 
 function draw() { // DRAW FUNCTION
+  if (gameState == 0) {
+    runTitleScreen();
+  }
+  else if (gameState == 1) {
+    runGame();
+  }
+  else if (gameState == 2) {
+    runEndScreen();
+  }
+
+  if (isTransitioning) transition();
+  
+}
+
+// TITLE SCREEN
+
+function runTitleScreen() {
+  drawSpace();
+  slideInPlanet();
+  newsTicker.draw();
+  playButton.draw();
+  drawTitle();
+}
+
+function slideInPlanet() {
+  planet.draw();
+  planet.y -= (planet.y - centerY - 30) / 15;
+}
+
+function drawTitle() {
+  push();
+  noStroke();
+  fill('white');
+  textSize(65);
+  text("A ROCK", centerX, centerY - 180);
+  textSize(25);
+  text("AND A HARD PLACE", centerX, centerY - 140);
+  pop();
+}
+
+// RUN GAME
+
+function startGame() {
+  // recenter planet
+  planet.x = centerX;
+  planet.y = centerY;
+
+  // update game state
+  gameState = 1;
+
+  // clear news ticker
+  newsTicker.headlinesOnDisplay = [];
+}
+
+function runGame() {
   // background updates
   incrementTime();
-  addAsteroids();
+  if (apocalypseHasStarted) addAsteroids();
   updatePopulation();
 
   // visual updates
@@ -128,17 +222,7 @@ function draw() { // DRAW FUNCTION
   planet.draw();
   updateAsteroids();
   drawHUD();
-  // drawPlanetRadius();
-}
-
-// debug tool to help visualize planet radius
-function drawPlanetRadius() {
-  // show planet radius
-  push();
-  stroke('white');
-  noFill();
-  ellipse(centerX, centerY, planetRadius);
-  pop();
+  // Planet.drawPlanetRadius();
 }
 
 function drawSpace() {
@@ -154,6 +238,127 @@ function drawHUD() {
   drawPopulation();
   drawBuyMinerButton();
   drawBuyRocketButton();
+  newsTicker.draw();
+}
+
+// RUN END SCREEN
+
+function endGame() {
+  gameState = 2;
+}
+
+function runEndScreen() {
+  drawSpace();
+  drawMoon();
+  drawSummary();
+  replayButton.draw();
+}
+
+function drawMoon() {
+  push();
+  imageMode(CENTER);
+  image(moonSprite, centerX, centerY - 50);
+  pop();
+}
+
+function drawSummary() {
+  let minutes = floor(timeSurvived / 60);
+  let seconds = timeSurvived % 60;
+
+  push();
+  noStroke();
+  fill('white');
+  textSize(18);
+  text("Extinction reached in", centerX, centerY + 50);
+  text(minutes + " minutes and " + seconds + " seconds.", centerX, centerY + 75);
+  pop();
+}
+
+function resetGame() {
+  headlines = [];
+  impactHeadlines = [];
+  headlines.push(loadStrings('headlines/stage0.txt'));
+  headlines.push(loadStrings('headlines/stage1.txt'));
+  headlines.push(loadStrings('headlines/stage2.txt'));
+  headlines.push(loadStrings('headlines/stage3.txt'));
+  impactHeadlines = loadStrings('headlines/impact.txt');
+
+  gameState = 1;
+  apocalypseHasStarted = false;
+  gameIsOver = false;
+  isOnEndScreen = false;
+
+  population = initialPopulation;
+  populationRate = 0;
+
+  time = 0;
+  bits = 0;
+  
+  planet.x = centerX;
+  planet.y = centerY;
+
+  miners = [];
+  minerCost = 0;
+
+  asteroids = [];
+  explosions = [];
+
+  rockets = [];
+  rocketCost = 0;
+
+  newsTicker.headlinesOnDisplay = [];
+}
+
+// TRANSITION FUNCTIONS
+
+function beginTransition() {
+  isTransitioning = true;
+}
+
+function transition() {
+  // fading into the game
+  if (gameState == 0) {
+    fadeToBlack();
+    if (transparency > 255) startGame();
+  }
+  else if (gameState == 1 && !gameIsOver) {
+    fadeBackIn();
+    if (transparency <= 0) isTransitioning = false;
+  }
+
+  // fading to end screen
+  else if (gameState == 1 && gameIsOver) {
+    fadeToBlack();
+    if (transparency > 255) endGame();
+  }
+  else if (gameState == 2 && !isOnEndScreen) {
+    fadeBackIn();
+    if (transparency <= 0) {isOnEndScreen = true; isTransitioning = false;};
+  }
+
+  // fading back into game
+  else if (gameState == 2 && isOnEndScreen) {
+    fadeToBlack();
+    if (transparency > 255) resetGame();
+  }
+}
+
+function fadeToBlack() {
+  push();
+  noStroke();
+  fill(0, transparency);
+  rect(0, 0, width, height);
+  pop();
+  transparency += fadeSpeed;
+}
+
+function fadeBackIn() {
+  push();
+  noStroke();
+  fill(0, transparency);
+  rect(0, 0, width, height);
+  pop();
+  transparency -= fadeSpeed;
 }
 
 // MOUSE FUNCTIONS
@@ -161,9 +366,17 @@ function drawHUD() {
 function mousePressed() {
   // update cursor
   cursor('assets/click.png');
-  
-  if (buyMinerButton.over()) buyMinerButton.press();
-  if (buyRocketButton.over()) buyRocketButton.press();
+
+  if (gameState == 0 && playButton.over()) {
+    playButton.press();
+  }
+  else if (gameState == 1) {
+    if (buyMinerButton.over()) buyMinerButton.press();
+    if (buyRocketButton.over()) buyRocketButton.press();
+  }
+  else if (gameState == 2) {
+    if (replayButton.over()) replayButton.press();
+  }
 }
 
 function mouseReleased() {
@@ -172,6 +385,8 @@ function mouseReleased() {
 
   buyMinerButton.release();
   buyRocketButton.release();
+  playButton.release();
+  replayButton.release();
 }
 
 // TIMER FUNCTIONS
@@ -194,8 +409,8 @@ function drawTime() {
   textAlign(LEFT);
   noStroke();
   fill('white');
-  textSize(40);
-  text(minutes + ':' + seconds, 30, 65);
+  textSize(35);
+  text(minutes + ':' + seconds, 30, 110);
   pop();
 }
 
@@ -203,18 +418,22 @@ function drawTime() {
 
 function updatePopulation() {
   population += populationRate;
-  if (population <= 0) noLoop();
+  if (population <= 0) {
+    timeSurvived = time;
+    gameIsOver = true;
+    beginTransition();
+  }
 }
 
 function drawPopulation() {
   push();
   noStroke();
   fill('white');
-  textSize(20);
-  text('Population:', centerX, 80);
-  textSize(25);
-  if (population > 0) text(round(population / 1000000000, 2) + " billion", centerX, 120);
-  else text(0, centerX, 110);
+  textSize(18);
+  text('Population:', centerX, newsTickerHeight + 45);
+  textSize(22);
+  if (population > 0) text(round(population / 1000000000, 2) + " billion", centerX, newsTickerHeight + 75);
+  else text(0, centerX, newsTickerHeight + 75);
   pop();
 }
 
@@ -224,8 +443,8 @@ function drawBits() {
   push();
   noStroke();
   fill('white');
-  textSize(25);
-  text('Bits: ' + bits, centerX, height - 115);
+  textSize(22);
+  text('Bits: ' + bits, centerX, height - 110);
   pop();
 }
 
@@ -278,7 +497,6 @@ function buyRocket() {
     rocketCost += rocketCostIncrease;
     rockets.push(new Rocket());
   }
-  // rockets.push(new Rocket());
 }
 
 function updateRockets() {
@@ -291,16 +509,33 @@ function updateRockets() {
 
 // BUTTON FUNCTIONS
 
+function createButtons() {
+  createBuyMinerButton();
+  createBuyRocketButton();
+  createPlayButton();
+  createReplayButton();
+}
+
 function createBuyMinerButton() {
-  buyMinerButton = new Button(centerX - 90, height - 60, buyMiner);
+  buyMinerButton = new Button(centerX - 90, height - 55, buyMiner);
   buyMinerButton.addText("Buy Miner", buyMinerButton.x, buyMinerButton.y - 9, 18);
   buyMinerButton.addText("(Free)", buyMinerButton.x, buyMinerButton.y + 10, 13);
 }
 
 function createBuyRocketButton() {
-  buyRocketButton = new Button(centerX + 90, height - 60, buyRocket);
+  buyRocketButton = new Button(centerX + 90, height - 55, buyRocket);
   buyRocketButton.addText("Buy Rocket", buyRocketButton.x, buyRocketButton.y - 9, 18);
   buyRocketButton.addText("(Free)", buyRocketButton.x, buyRocketButton.y + 10, 13);
+}
+
+function createPlayButton() {
+  playButton = new Button(centerX, centerY + 240, beginTransition);
+  playButton.addText("PLAY", playButton.x, playButton.y + 5, 30);
+}
+
+function createReplayButton() {
+  replayButton = new Button(centerX, centerY + 300, beginTransition);
+  replayButton.addText("PLAY AGAIN", replayButton.x, replayButton.y + 3, 18);
 }
 
 function drawBuyMinerButton() {
@@ -308,7 +543,7 @@ function drawBuyMinerButton() {
   if (cost == 0) cost = 'FREE';
   else cost = cost + ' Bits';
 
-  if (bits < minerCost) buyMinerButton.isLocked = true;
+  if (bits < minerCost || !apocalypseHasStarted) buyMinerButton.isLocked = true;
   else buyMinerButton.isLocked = false;
 
   buyMinerButton.updateText(1, '(' + cost + ')');
@@ -320,7 +555,7 @@ function drawBuyRocketButton() {
   if (cost == 0) cost = 'Free';
   else cost = cost + ' Bits'
 
-  if (bits < rocketCost) buyRocketButton.isLocked = true;
+  if (bits < rocketCost || !apocalypseHasStarted) buyRocketButton.isLocked = true;
   else buyRocketButton.isLocked = false;
 
   buyRocketButton.updateText(1, '(' + cost + ')');
