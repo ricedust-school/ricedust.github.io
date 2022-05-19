@@ -296,6 +296,7 @@ function resetGame() {
   
   planet.x = centerX;
   planet.y = centerY;
+  planet.rumbleAmplitude = 0;
 
   miners = [];
   minerCost = 0;
@@ -430,10 +431,10 @@ function drawPopulation() {
   noStroke();
   fill('white');
   textSize(18);
-  text('Population:', centerX, newsTickerHeight + 45);
+  text('Population:', centerX, newsTickerHeight + 55);
   textSize(22);
-  if (population > 0) text(round(population / 1000000000, 2) + " billion", centerX, newsTickerHeight + 75);
-  else text(0, centerX, newsTickerHeight + 75);
+  if (population > 0) text(round(population / 1000000000, 2) + " billion", centerX, newsTickerHeight + 85);
+  else text(0, centerX, newsTickerHeight + 85);
   pop();
 }
 
@@ -444,7 +445,7 @@ function drawBits() {
   noStroke();
   fill('white');
   textSize(22);
-  text('Bits: ' + bits, centerX, height - 110);
+  text('Bits: ' + bits, centerX, height - 130);
   pop();
 }
 
@@ -517,13 +518,13 @@ function createButtons() {
 }
 
 function createBuyMinerButton() {
-  buyMinerButton = new Button(centerX - 90, height - 55, buyMiner);
+  buyMinerButton = new Button(centerX - 90, height - 75, buyMiner);
   buyMinerButton.addText("Buy Miner", buyMinerButton.x, buyMinerButton.y - 9, 18);
   buyMinerButton.addText("(Free)", buyMinerButton.x, buyMinerButton.y + 10, 13);
 }
 
 function createBuyRocketButton() {
-  buyRocketButton = new Button(centerX + 90, height - 55, buyRocket);
+  buyRocketButton = new Button(centerX + 90, height - 75, buyRocket);
   buyRocketButton.addText("Buy Rocket", buyRocketButton.x, buyRocketButton.y - 9, 18);
   buyRocketButton.addText("(Free)", buyRocketButton.x, buyRocketButton.y + 10, 13);
 }
