@@ -2,6 +2,7 @@ class NewsTicker {
   stage;
   headlinesOnDisplay;
   impactHasOccured;
+  impactHeadlineIsInQueue;
 
   constructor() {
     this.stage = 0;

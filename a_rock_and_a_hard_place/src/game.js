@@ -72,7 +72,7 @@ let scrollSpeed = 2;
 let headlineSize = 18;
 let headlineBuffer = 100;
 let stage1Threshold = 6000000000;
-let stage2Threshold = 2000000000;
+let stage2Threshold = 2500000000;
 let headlines = [];
 let impactHeadlines = [];
 
@@ -307,7 +307,10 @@ function resetGame() {
   rockets = [];
   rocketCost = 0;
 
+  newsTicker.stage = 0;
   newsTicker.headlinesOnDisplay = [];
+  newsTicker.impactHasOccured = false;
+  newsTicker.impactHeadlineIsInQueue = false;
 }
 
 // TRANSITION FUNCTIONS
