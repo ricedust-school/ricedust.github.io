@@ -40,7 +40,7 @@ let pollutionRate = 420; // time it takes for pollution state to update
 let asteroidSprites = [];
 let asteroids = [];
 let initialAsteroidSpawnRate = .01;
-let asteroidSpawnRateMultiplier = .0008;
+let asteroidSpawnRateMultiplier = .00079;
 let asteroidSpeed = 1;
 let asteroidMinOrbitSpeed = 0.1;
 let asteroidMaxOrbitSpeed = 0.3;
@@ -538,7 +538,7 @@ function createPlayButton() {
 }
 
 function createReplayButton() {
-  replayButton = new Button(centerX, centerY + 300, beginTransition);
+  replayButton = new Button(centerX, centerY + 240, beginTransition);
   replayButton.addText("PLAY AGAIN", replayButton.x, replayButton.y + 3, 18);
 }
 
